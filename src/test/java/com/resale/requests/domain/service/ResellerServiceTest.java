@@ -1,5 +1,6 @@
 package com.resale.requests.domain.service;
 
+import com.resale.requests.domain.entity.Contacts;
 import com.resale.requests.domain.entity.Reseller;
 import nl.altindag.log.LogCaptor;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,6 +33,10 @@ public class ResellerServiceTest {
         Reseller reseller = new Reseller();
         reseller.setCnpj("12345678000100");
         reseller.setPhoneNumbers(List.of("11 987654321"));
+        reseller.setContacts(List.of(Contacts.builder()
+                        .main(true)
+                        .contact("John Doe")
+                .build()));
 
         String result = resellerService.registerReseller(reseller);
 
@@ -46,6 +51,10 @@ public class ResellerServiceTest {
         Reseller reseller = new Reseller();
         reseller.setCnpj("12345678000100");
         reseller.setPhoneNumbers(List.of("11 987654321"));
+        reseller.setContacts(List.of(Contacts.builder()
+                .main(true)
+                .contact("John Doe")
+                .build()));
 
         resellerService.registerReseller(reseller);
 
@@ -60,11 +69,31 @@ public class ResellerServiceTest {
         Reseller reseller = new Reseller();
         reseller.setCnpj("12345678000100");
         reseller.setPhoneNumbers(List.of("12345"));
+        reseller.setContacts(List.of(Contacts.builder()
+                .main(true)
+                .contact("John Doe")
+                .build()));
 
         RuntimeException exception = assertThrows(RuntimeException.class, () -> {
             resellerService.registerReseller(reseller);
         });
         assertEquals("Invalid phone number", exception.getMessage());
+    }
+
+    @Test
+    void testRegisterResellerNoMainContact() {
+        Reseller reseller = new Reseller();
+        reseller.setCnpj("12345678000100");
+        reseller.setPhoneNumbers(List.of("12345"));
+        reseller.setContacts(List.of(Contacts.builder()
+                .main(false)
+                .contact("John Doe")
+                .build()));
+
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+            resellerService.registerReseller(reseller);
+        });
+        assertEquals("There must be a primary contact name", exception.getMessage());
     }
 
     @Test

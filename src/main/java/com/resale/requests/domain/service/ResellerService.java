@@ -1,5 +1,6 @@
 package com.resale.requests.domain.service;
 
+import com.resale.requests.domain.entity.Contacts;
 import com.resale.requests.domain.entity.Reseller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +21,11 @@ public class ResellerService {
 
         if (resellerMap.containsKey(reseller.getCnpj())) {
             throw new RuntimeException("CNPJ already registered.");
+        }
+
+        boolean main = reseller.getContacts().stream().anyMatch(Contacts::isMain);
+        if (!main) {
+            throw new RuntimeException("There must be a primary contact name");
         }
 
         if (!reseller.getPhoneNumbers().isEmpty()) {
