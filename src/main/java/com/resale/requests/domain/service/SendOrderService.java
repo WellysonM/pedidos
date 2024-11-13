@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import javax.naming.CommunicationException;
 import java.util.List;
 
 @Slf4j
@@ -34,7 +35,7 @@ public class SendOrderService {
                     .sum();
 
             if (totalQuantity < 1000) {
-                throw new IllegalArgumentException("Order does not meet the minimum quantity of 1000 units.");
+                throw new RuntimeException("Order does not meet the minimum quantity of 1000 units.");
             }
 
             OrderSend orderSend = OrderSend.builder()
@@ -46,7 +47,7 @@ public class SendOrderService {
 
             return apiService.sendOrderToApi(orderSend);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException(e.getMessage());
         }
     }
 }

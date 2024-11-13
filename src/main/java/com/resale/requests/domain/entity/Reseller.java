@@ -2,11 +2,11 @@ package com.resale.requests.domain.entity;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
-import java.util.Map;
 
 @Data
 @NoArgsConstructor
@@ -27,7 +27,7 @@ public class Reseller {
 
     private List<String> phoneNumbers;
 
-    private Map<Boolean, String> contacts;
+    private List<Contacts> contacts;
 
     private List<Address> deliveryAddresses;
 }

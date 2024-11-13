@@ -22,19 +22,24 @@ public class OrderService {
     public OrderResponse receiveOrder(Order order) {
         logger.info("Receiving order for reseller with CNPJ: {}", order.getResellerCnpj());
 
-        resellerService.validateReseller(order.getResellerCnpj());
-        String orderId = UUID.randomUUID().toString();
-        order.setOrderId(orderId);
-        List<Order> orders = orderMap.getOrDefault(order.getResellerCnpj(), new ArrayList<>());
-        orders.add(order);
-        orderMap.put(order.getResellerCnpj(), orders);
+        try {
+            resellerService.validateReseller(order.getResellerCnpj());
+            String orderId = UUID.randomUUID().toString();
+            order.setOrderId(orderId);
+            List<Order> orders = orderMap.getOrDefault(order.getResellerCnpj(), new ArrayList<>());
+            orders.add(order);
+            orderMap.put(order.getResellerCnpj(), orders);
 
-        logger.info("Order saved successfully with ID: {}", orderId);
+            logger.info("Order saved successfully with ID: {}", orderId);
 
-        return OrderResponse.builder()
-                .orderId(orderId)
-                .orderItems(order.getItems())
-                .build();
+            return OrderResponse.builder()
+                    .orderId(orderId)
+                    .orderItems(order.getItems())
+                    .build();
+        } catch (Exception e) {
+            logger.error("Error when receiving order");
+            throw new RuntimeException(e.getMessage());
+        }
     }
 
 
@@ -47,7 +52,7 @@ public class OrderService {
             return orders;
         } catch (Exception e) {
             logger.error("Error searching for order");
-            throw new IllegalArgumentException(e.getMessage());
+            throw new RuntimeException(e.getMessage());
         }
     }
 }

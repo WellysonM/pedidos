@@ -1,7 +1,6 @@
 package com.resale.requests.domain.service;
 
 import com.resale.requests.domain.entity.Reseller;
-import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -10,7 +9,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-@Slf4j
 @Service
 public class ResellerService {
 
@@ -21,7 +19,16 @@ public class ResellerService {
         logger.info("Saving reseller {}", reseller);
 
         if (resellerMap.containsKey(reseller.getCnpj())) {
-            throw new IllegalArgumentException("CNPJ already registered.");
+            throw new RuntimeException("CNPJ already registered.");
+        }
+
+        if (!reseller.getPhoneNumbers().isEmpty()) {
+            for (String phoneNumber : reseller.getPhoneNumbers()) {
+                boolean valid = phoneNumber.matches("(\\(?\\d{2}\\)?\\s)?(\\d{4,5}\\d{4})");
+                if (!valid) {
+                    throw new RuntimeException("Invalid phone number");
+                }
+            }
         }
         resellerMap.put(reseller.getCnpj(), reseller);
         return "Reseller successfully registered!";
@@ -35,6 +42,7 @@ public class ResellerService {
             }
         } catch (Exception e) {
             logger.error("Error searching for reseller {}.", e.getMessage());
+            throw new RuntimeException(e.getMessage());
         }
     }
 
