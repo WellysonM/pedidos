@@ -41,12 +41,12 @@ public class ResellerService {
                 throw new Exception("Reseller with CNPJ: " + resellerCnpj + " not found.");
             }
         } catch (Exception e) {
-            logger.error("Error searching for reseller {}.", e.getMessage());
+            logger.error("Error searching for reseller {}", e.getMessage());
             throw new RuntimeException(e.getMessage());
         }
     }
 
-    private Reseller getReseller(String cnpj) {
+    public Reseller getReseller(String cnpj) {
         return resellerMap.get(cnpj);
     }
 }
